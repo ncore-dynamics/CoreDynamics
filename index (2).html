@@ -1,0 +1,596 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Core Dynamics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --glass: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --accent: #00e5ff;
+    --accent-soft: rgba(0, 229, 255, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #05050a;
+    color: #e8eef7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(ellipse at 20% 20%, #0a1a2f 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, #0f0a2a 0%, transparent 50%),
+                #05050a;
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: float 18s infinite ease-in-out;
+  }
+  .orb1 { width: 420px; height: 420px; background: #00b4d8; top: -100px; left: -100px; }
+  .orb2 { width: 350px; height: 350px; background: #7209b7; bottom: -80px; right: -80px; animation-delay: -6s; }
+  .orb3 { width: 280px; height: 280px; background: #00e5ff; top: 40%; left: 60%; animation-delay: -12s; }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -30px) scale(1.05); }
+    66% { transform: translate(-30px, 20px) scale(0.95); }
+  }
+
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+  }
+
+  nav {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(1100px, 92%);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+  .logo img {
+    height: 48px;
+    width: auto;
+  }
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.45rem;
+    letter-spacing: 0.5px;
+    color: #fff;
+    line-height: 1.1;
+  }
+  .logo-text span {
+    color: var(--accent);
+  }
+  .logo-sub {
+    font-size: 0.7rem;
+    color: #8a9bb5;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a {
+    color: #c8d4e6;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.25s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .cta-btn {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    padding: 10px 22px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .cta-btn:hover {
+    background: rgba(0, 229, 255, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 140px 20px 80px;
+  }
+  .hero h1 {
+    font-size: clamp(2.8rem, 7vw, 4.8rem);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 1.2rem;
+    color: #a0b0c8;
+    max-width: 580px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+  .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .btn-primary {
+    background: var(--accent);
+    color: #05050a;
+    padding: 16px 36px;
+    border-radius: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3); }
+  .btn-secondary {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: #e8eef7;
+    padding: 16px 36px;
+    border-radius: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+  }
+
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 20px;
+  }
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .section-sub {
+    color: #8a9bb5;
+    margin-bottom: 48px;
+    font-size: 1.05rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    padding: 32px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0, 229, 255, 0.35);
+  }
+  .card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card p { color: #a0b0c8; line-height: 1.6; font-size: 0.95rem; }
+  .icon {
+    width: 40px; height: 40px;
+    background: var(--accent-soft);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+
+  .demo-box {
+    padding: 48px;
+    text-align: center;
+  }
+  .demo-placeholder {
+    height: 300px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed rgba(255,255,255,0.15);
+    margin-top: 24px;
+    color: #6a7a95;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .price-card {
+    padding: 32px 28px;
+    position: relative;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .price-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(0, 229, 255, 0.4);
+  }
+  .price-card.popular {
+    border-color: rgba(0, 229, 255, 0.45);
+    background: rgba(0, 229, 255, 0.06);
+  }
+  .popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #05050a;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+  }
+  .price-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
+  .price {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 12px 0 6px;
+  }
+  .price span {
+    font-size: 1rem;
+    color: #8a9bb5;
+    font-weight: 500;
+  }
+  .price-card ul { list-style: none; margin: 24px 0; }
+  .price-card li {
+    padding: 8px 0;
+    font-size: 0.95rem;
+    color: #c8d4e6;
+    display: flex;
+    gap: 10px;
+  }
+  .price-card li::before {
+    content: "✓";
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .select-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .select-btn:hover { background: rgba(0, 229, 255, 0.25); }
+  .popular .select-btn {
+    background: var(--accent);
+    color: #05050a;
+    border: none;
+  }
+
+  .extra-info {
+    margin-top: 50px;
+    padding: 32px;
+  }
+  .extra-info h4 {
+    margin-bottom: 12px;
+    color: var(--accent);
+  }
+  .extra-info p, .extra-info li {
+    color: #a0b0c8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .contact-form {
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  input, textarea, select {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    color: #e8eef7;
+    font-family: inherit;
+    font-size: 1rem;
+    outline: none;
+  }
+  select option { background: #0a0a12; }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  textarea { min-height: 120px; resize: vertical; }
+  button[type="submit"] {
+    background: var(--accent);
+    color: #05050a;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  footer {
+    text-align: center;
+    padding: 50px 20px 40px;
+    color: #5a6a80;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  @media (max-width: 700px) {
+    .nav-links { display: none; }
+    .hero h1 { font-size: 2.6rem; }
+    .logo img { height: 40px; }
+    .logo-text { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+
+  <nav class="glass">
+    <a href="#" class="logo">
+      <img src="logo.png" alt="Core Dynamics Logo">
+      <div>
+        <div class="logo-text">Core <span>Dynamics</span></div>
+        <div class="logo-sub">WEB DEVELOPMENT</div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#demos">Demos</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#pricing" class="cta-btn">View Plans</a>
+  </nav>
+
+  <section class="hero">
+    <h1>Affordable Websites<br><span>That Look Premium</span></h1>
+    <p>Core Dynamics builds clean, mobile-friendly business websites with transparent pricing and fast delivery.</p>
+    <div class="hero-buttons">
+      <a href="#pricing" class="btn-primary">See Packages</a>
+      <a href="#contact" class="btn-secondary">Talk to Us</a>
+    </div>
+  </section>
+
+  <section id="services">
+    <h2 class="section-title">What we deliver</h2>
+    <p class="section-sub">Clean design. Clear results.</p>
+    <div class="grid">
+      <div class="card glass">
+        <h3><div class="icon">🌐</div> Business Websites</h3>
+        <p>One-page and multi-section sites that look professional on every device.</p>
+      </div>
+      <div class="card glass">
+        <h3><div class="icon">📱</div> Mobile-First Design</h3>
+        <p>Fully responsive layouts with Call & WhatsApp buttons for easy contact.</p>
+      </div>
+      <div class="card glass">
+        <h3><div class="icon">⚡</div> Fast Delivery</h3>
+        <p>Affordable packages with quick turnaround and clear communication.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="demos">
+    <h2 class="section-title">Live Demos</h2>
+    <p class="section-sub">See the quality of our work</p>
+    <div class="demo-box glass">
+      <h3 style="margin-bottom: 8px;">Website Demo Preview</h3>
+      <p style="color:#8a9bb5;">Interactive demos and sample sites will appear here.</p>
+      <div class="demo-placeholder">
+        Demo Player / Sample Website Area
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2 class="section-title">Website Packages</h2>
+    <p class="section-sub">Simple & transparent pricing</p>
+
+    <div class="pricing-grid">
+      <div class="price-card glass">
+        <h3>🌐 Starter Website</h3>
+        <div class="price">₹799 <span>/ one-time</span></div>
+        <ul>
+          <li>One-page business website</li>
+          <li>Business name, description & contact</li>
+          <li>Mobile-friendly layout</li>
+          <li>Call & WhatsApp buttons</li>
+          <li>Basic deployment + live link</li>
+        </ul>
+        <a href="#contact" class="select-btn" onclick="selectPlan('Starter Website - ₹799')">Select Plan</a>
+      </div>
+
+      <div class="price-card glass popular">
+        <div class="popular-badge">Most Popular</div>
+        <h3>☕ Business Website</h3>
+        <div class="price">₹1,499 <span>/ one-time</span></div>
+        <ul>
+          <li>Everything in Starter</li>
+          <li>Menu / Services with prices</li>
+          <li>Photo gallery</li>
+          <li>Google Maps + directions</li>
+          <li>Opening hours & social links</li>
+          <li>More customized design</li>
+        </ul>
+        <a href="#contact" class="select-btn" onclick="selectPlan('Business Website - ₹1,499')">Select Plan</a>
+      </div>
+
+      <div class="price-card glass">
+        <h3>✨ Premium Website</h3>
+        <div class="price">₹2,499 <span>/ one-time</span></div>
+        <ul>
+          <li>Everything in Business</li>
+          <li>Additional content sections</li>
+          <li>Enhanced visual design & branding</li>
+          <li>More customized layout</li>
+          <li>Extra design revisions</li>
+        </ul>
+        <a href="#contact" class="select-btn" onclick="selectPlan('Premium Website - ₹2,499')">Select Plan</a>
+      </div>
+    </div>
+
+    <div class="extra-info glass">
+      <h4>Hosting Options</h4>
+      <p>🌱 Free hosting available on eligible free plans (Netlify / Cloudflare Pages subdomain).</p>
+      <p>🌐 Custom domain can be purchased and connected.</p>
+
+      <h4 style="margin-top:24px;">Custom Domain & Setup</h4>
+      <ul style="list-style:none; padding:0;">
+        <li>• Domain registration: Actual registrar price (confirmed before purchase)</li>
+        <li>• Domain connection & setup: ₹300 one-time</li>
+        <li>• Domain renewal: Paid separately when due</li>
+      </ul>
+
+      <h4 style="margin-top:24px;">Optional Maintenance</h4>
+      <ul style="list-style:none; padding:0;">
+        <li>• Basic: ₹299/month (up to 2 small updates)</li>
+        <li>• Standard: ₹599/month (up to 4 small updates + basic checks)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2 class="section-title" style="text-align:center;">Let’s get started</h2>
+    <p class="section-sub" style="text-align:center;">
+      Email: <a href="mailto:ncoreopc@gmail.com" style="color:#00e5ff;">ncoreopc@gmail.com</a>
+    </p>
+
+    <form class="contact-form glass" style="padding: 36px;" onsubmit="submitForm(event)">
+      <input type="text" id="name" placeholder="Your name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="tel" id="phone" placeholder="Phone / WhatsApp number" required>
+      <input type="text" id="business" placeholder="Business name">
+
+      <select id="plan" required>
+        <option value="" disabled selected>Select a package</option>
+        <option value="Starter Website - ₹799">Starter Website — ₹799</option>
+        <option value="Business Website - ₹1,499">Business Website — ₹1,499</option>
+        <option value="Premium Website - ₹2,499">Premium Website — ₹2,499</option>
+        <option value="Just Inquiry">Just an inquiry / Not sure yet</option>
+      </select>
+
+      <textarea id="message" placeholder="Any extra details or questions..."></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </section>
+
+  <footer>
+    <strong>Core Dynamics</strong> — Web Development<br>
+    A Part of NCORE<br><br>
+    © 2026 Core Dynamics. All Rights Reserved.<br>
+    This website and its content are the exclusive property of Core Dynamics.<br>
+    Unauthorized copying, redistribution, or modification is strictly prohibited.<br><br>
+    Contact: <a href="mailto:ncoreopc@gmail.com">ncoreopc@gmail.com</a>
+  </footer>
+
+<script>
+  function selectPlan(planName) {
+    document.getElementById('plan').value = planName;
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+    const data = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      business: document.getElementById('business').value,
+      plan: document.getElementById('plan').value,
+      message: document.getElementById('message').value,
+      date: new Date().toLocaleString()
+    };
+    let leads = JSON.parse(localStorage.getItem('core_leads') || '[]');
+    leads.push(data);
+    localStorage.setItem('core_leads', JSON.stringify(leads));
+    alert('Thank you! Your message has been received.\nI will contact you soon.');
+    e.target.reset();
+  }
+</script>
+<script>
+  const FIREBASE_URL = "https://console.firebase.google.com/u/3/project/coredynamics-ea139/database/coredynamics-ea139-default-rtdb/data/~2F"; // Same URL as your APK
+
+  // 1. Apply live controls from the Admin APK
+  async function loadSiteControlFromApp() {
+    const res = await fetch(`${FIREBASE_URL}/siteConfig.json`);
+    const cfg = await res.json();
+    if (!cfg) return;
+
+    if (cfg.status === "maintenance") {
+      document.body.innerHTML = `<div style="display:flex;height:100vh;align-items:center;justify-content:center;background:#0b0f19;color:#fff;font-family:sans-serif;text-align:center;padding:20px;"><div><h1>Under Scheduled Maintenance</h1><p style="color:#94a3b8;margin-top:10px;">${cfg.banner || "We will be back shortly."}</p></div></div>`;
+      return;
+    }
+    const heroEl = document.getElementById("heroHeadline"); // Add id="heroHeadline" to your main <h1>
+    if (heroEl && cfg.hero) heroEl.innerText = cfg.hero;
+
+    const bannerEl = document.getElementById("topBanner"); // Add id="topBanner" to a top bar div
+    if (bannerEl && cfg.banner) { bannerEl.innerText = cfg.banner; bannerEl.style.display = "block"; }
+  }
+  loadSiteControlFromApp();
+
+  // 2. Call this function from your website's Contact Form submit event
+  async function sendLeadToAdminApp(name, phone, service, notes) {
+    const id = Date.now().toString();
+    await fetch(`${FIREBASE_URL}/leads/${id}.json`, {
+      method: "PUT",
+      body: JSON.stringify({ id, name, phone, service, notes, status: "New", date: new Date().toLocaleDateString() })
+    });
+    alert("Thank you! Our team has received your inquiry.");
+  }
+</script>
+
+</body>
+</html>
