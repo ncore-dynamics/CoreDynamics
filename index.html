@@ -596,6 +596,21 @@
 <script>
 (function() {
   var DB_URL = "https://coredynamics-ea139-default-rtdb.firebaseio.com";
+  var chosenPackage = "";
+
+  // Remember if a visitor clicks any Package / Pricing button on the page
+  document.addEventListener("click", function(e) {
+    var btn = e.target.closest("a, button");
+    if (!btn) return;
+    var card = btn.closest(".pricing-card, .plan-card, .package-card, .card, .glass");
+    if (card) {
+      var titleEl = card.querySelector("h2, h3, h4, .plan-name, .title");
+      var priceEl = card.querySelector(".price, .amount, strong");
+      if (titleEl && (btn.innerText.match(/plan|start|choose|select|get|book|buy|quote/i))) {
+        chosenPackage = titleEl.innerText.trim() + (priceEl ? " (" + priceEl.innerText.trim() + ")" : "");
+      }
+    }
+  });
 
   // 1. Live Website Remote Control (Banner, Hero Headline, Phone, Maintenance)
   fetch(DB_URL + "/siteConfig.json?t=" + Date.now())
@@ -626,23 +641,32 @@
       }
     }).catch(function(e) {});
 
-  // 2. Send Contact Form Submissions Directly to Admin App
+  // 2. Send Contact Form + Selected Package to Admin App
   window.addEventListener("load", function() {
     window.submitForm = function(event) {
       if (event) event.preventDefault();
+      var form = (event && event.target) ? event.target : document.querySelector(".contact-form");
       var name = (document.getElementById("name") && document.getElementById("name").value.trim()) || "Website Visitor";
       var email = (document.getElementById("email") && document.getElementById("email").value.trim()) || "";
       var phone = (document.getElementById("phone") && document.getElementById("phone").value.trim()) || "";
       var business = (document.getElementById("business") && document.getElementById("business").value.trim()) || "";
       var message = (document.getElementById("message") && document.getElementById("message").value.trim()) || "";
 
+      var selectEl = form ? form.querySelector("select") : document.querySelector("select");
+      var selectedOption = (selectEl && selectEl.value) ? selectEl.value.trim() : "";
+      var pkg = selectedOption || chosenPackage || business || "Custom Package";
+
       var id = Date.now().toString();
       var payload = {
         id: id,
         name: name,
         phone: phone || email || "No Phone",
-        service: business || "Website Inquiry",
-        notes: (email ? "Email: " + email + " | " : "") + message,
+        service: pkg,
+        packagePlan: pkg,
+        paymentStatus: "Unpaid",
+        totalFee: "",
+        paidAmount: "",
+        notes: (business ? "Business: " + business + " | " : "") + (email ? "Email: " + email + " | " : "") + message,
         status: "New",
         date: new Date().toLocaleDateString()
       };
@@ -653,15 +677,14 @@
         body: JSON.stringify(payload)
       }).then(function(res) {
         if (res.ok) {
-          alert("Thank you " + name + "! Your message has been sent to Core Dynamics.");
-          if (event && event.target && event.target.reset) event.target.reset();
+          alert("Thank you " + name + "! Your package inquiry (" + pkg + ") has been received.");
+          if (form && form.reset) form.reset();
         }
       });
     };
   });
 })();
 </script>
-
 
 </body>
 </html>
