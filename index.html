@@ -1,387 +1,348 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Core Dynamics</title>
+<title>Core Dynamics — Web Development, a part of NCORE</title>
+<meta name="description" content="Core Dynamics builds clean, mobile-friendly business websites with transparent pricing. A part of NCORE.">
+<link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* NCORE palette: marble white, brushed gold, emerald */
   :root {
-    --glass: rgba(255, 255, 255, 0.08);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --accent: #00e5ff;
-    --accent-soft: rgba(0, 229, 255, 0.15);
+    --marble: #f6f4ee;
+    --ink: #14211b;
+    --ink-soft: #4a5a52;
+    --emerald: #0f6b3f;
+    --emerald-deep: #0a4a2c;
+    --emerald-bright: #1f9d57;
+    --gold: #b8913a;
+    --gold-light: #d9b968;
+    --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+    /* Liquid-glass tokens (light) */
+    --glass-top: rgba(255, 255, 255, .72);
+    --glass-bot: rgba(255, 255, 255, .34);
+    --glass-edge: rgba(255, 255, 255, .85);
+    --glass-shadow: 0 14px 44px rgba(10, 74, 44, .13), 0 2px 6px rgba(10, 74, 44, .06);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  html { scroll-behavior: smooth; }
   body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background: #05050a;
-    color: #e8eef7;
+    font-family: var(--sans);
+    background: var(--marble);
+    color: var(--ink);
     min-height: 100vh;
     overflow-x: hidden;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
+  a { color: var(--emerald); }
+  section[id] { scroll-margin-top: 110px; }
 
+  /* ---------- Background: marble + liquid colour blobs + faint circuitry ---------- */
   .bg {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background: radial-gradient(ellipse at 20% 20%, #0a1a2f 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, #0f0a2a 0%, transparent 50%),
-                #05050a;
+    position: fixed; inset: 0; z-index: -1; overflow: hidden;
+    background:
+      radial-gradient(ellipse at 15% 10%, #ffffff 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 90%, #ece7d8 0%, transparent 55%),
+      var(--marble);
+  }
+  .bg::before { /* faint circuit-trace grid echoing the logo background */
+    content: ""; position: absolute; inset: 0; opacity: .5;
+    background-image:
+      linear-gradient(90deg, rgba(184,145,58,.10) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(184,145,58,.08) 1px, transparent 1px);
+    background-size: 64px 64px, 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 78%);
+            mask-image: radial-gradient(ellipse at center, #000 20%, transparent 78%);
   }
   .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.4;
-    animation: float 18s infinite ease-in-out;
+    position: absolute; filter: blur(70px);
+    animation: float 22s infinite ease-in-out, morph 16s infinite ease-in-out;
+    will-change: transform, border-radius;
   }
-  .orb1 { width: 420px; height: 420px; background: #00b4d8; top: -100px; left: -100px; }
-  .orb2 { width: 350px; height: 350px; background: #7209b7; bottom: -80px; right: -80px; animation-delay: -6s; }
-  .orb3 { width: 280px; height: 280px; background: #00e5ff; top: 40%; left: 60%; animation-delay: -12s; }
-
+  .orb1 { width: 460px; height: 460px; background: var(--emerald-bright); opacity: .30; top: -120px; left: -120px; }
+  .orb2 { width: 400px; height: 400px; background: var(--gold-light); opacity: .55; bottom: -100px; right: -90px; animation-delay: -7s, -4s; }
+  .orb3 { width: 300px; height: 300px; background: var(--emerald); opacity: .20; top: 42%; left: 62%; animation-delay: -13s, -9s; }
   @keyframes float {
     0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(40px, -30px) scale(1.05); }
-    66% { transform: translate(-30px, 20px) scale(0.95); }
+    33%      { transform: translate(46px, -34px) scale(1.07); }
+    66%      { transform: translate(-34px, 24px) scale(.94); }
+  }
+  @keyframes morph { /* liquid, blobby shape */
+    0%, 100% { border-radius: 58% 42% 55% 45% / 48% 56% 44% 52%; }
+    50%      { border-radius: 42% 58% 46% 54% / 56% 44% 56% 44%; }
   }
 
+  /* ---------- Liquid glass ---------- */
   .glass {
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-  }
-
-  nav {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(1100px, 92%);
-    padding: 12px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-  }
-  .logo img {
-    height: 48px;
-    width: auto;
-  }
-  .logo-text {
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    font-size: 1.45rem;
-    letter-spacing: 0.5px;
-    color: #fff;
-    line-height: 1.1;
-  }
-  .logo-text span {
-    color: var(--accent);
-  }
-  .logo-sub {
-    font-size: 0.7rem;
-    color: #8a9bb5;
-    font-weight: 500;
-    letter-spacing: 1px;
-  }
-
-  .nav-links { display: flex; gap: 28px; list-style: none; }
-  .nav-links a {
-    color: #c8d4e6;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: color 0.25s;
-  }
-  .nav-links a:hover { color: var(--accent); }
-  .cta-btn {
-    background: var(--accent-soft);
-    color: var(--accent);
-    border: 1px solid rgba(0, 229, 255, 0.3);
-    padding: 10px 22px;
-    border-radius: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.25s;
-  }
-  .cta-btn:hover {
-    background: rgba(0, 229, 255, 0.25);
-    transform: translateY(-1px);
-  }
-
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 140px 20px 80px;
-  }
-  .hero h1 {
-    font-size: clamp(2.8rem, 7vw, 4.8rem);
-    font-weight: 700;
-    letter-spacing: -1.5px;
-    line-height: 1.1;
-    margin-bottom: 20px;
-  }
-  .hero h1 span { color: var(--accent); }
-  .hero p {
-    font-size: 1.2rem;
-    color: #a0b0c8;
-    max-width: 580px;
-    margin-bottom: 40px;
-    line-height: 1.6;
-  }
-  .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
-  .btn-primary {
-    background: var(--accent);
-    color: #05050a;
-    padding: 16px 36px;
-    border-radius: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.25s;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3); }
-  .btn-secondary {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    color: #e8eef7;
-    padding: 16px 36px;
-    border-radius: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    backdrop-filter: blur(12px);
-  }
-
-  section {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 80px 20px;
-  }
-  .section-title {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-bottom: 12px;
-    letter-spacing: -0.5px;
-  }
-  .section-sub {
-    color: #8a9bb5;
-    margin-bottom: 48px;
-    font-size: 1.05rem;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-  }
-  .card {
-    padding: 32px;
-    transition: transform 0.3s, border-color 0.3s;
-  }
-  .card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(0, 229, 255, 0.35);
-  }
-  .card h3 {
-    font-size: 1.25rem;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .card p { color: #a0b0c8; line-height: 1.6; font-size: 0.95rem; }
-  .icon {
-    width: 40px; height: 40px;
-    background: var(--accent-soft);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
-  }
-
-  .demo-box {
-    padding: 48px;
-    text-align: center;
-  }
-  .demo-placeholder {
-    height: 300px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px dashed rgba(255,255,255,0.15);
-    margin-top: 24px;
-    color: #6a7a95;
-  }
-
-  .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-  }
-  .price-card {
-    padding: 32px 28px;
     position: relative;
-    transition: transform 0.3s, border-color 0.3s;
+    background: linear-gradient(145deg, var(--glass-top), var(--glass-bot));
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+            backdrop-filter: blur(22px) saturate(170%);
+    border: 1px solid var(--glass-edge);
+    border-radius: 22px;
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 rgba(255,255,255,.95),   /* top specular edge */
+      inset 0 -1px 0 rgba(184,145,58,.22),   /* warm gold underside */
+      inset 0 0 22px rgba(255,255,255,.35);  /* inner glow */
+    overflow: hidden;
+    isolation: isolate;
   }
-  .price-card:hover {
-    transform: translateY(-8px);
-    border-color: rgba(0, 229, 255, 0.4);
+  .glass::before { /* curved specular highlight */
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(120% 80% at 8% -10%, rgba(255,255,255,.85) 0%, rgba(255,255,255,0) 52%),
+      linear-gradient(115deg, rgba(255,255,255,0) 40%, rgba(255,255,255,.35) 50%, rgba(255,255,255,0) 60%);
+    background-size: 100% 100%, 250% 100%;
+    background-position: 0 0, 130% 0;
+    transition: background-position .9s ease;
   }
+  .glass:hover::before { background-position: 0 0, -30% 0; } /* light sweep on hover */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass { background: rgba(255,255,255,.92); }
+  }
+
+  /* ---------- Banner (optional, set from admin app) ---------- */
+  #topBanner {
+    display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    background: linear-gradient(135deg, var(--emerald), var(--emerald-deep));
+    color: #fff; text-align: center; padding: 9px 16px; font-size: .88rem; font-weight: 600;
+    box-shadow: 0 4px 16px rgba(10,74,44,.3);
+  }
+  body.has-banner nav { top: 58px; }
+
+  /* ---------- Nav ---------- */
+  nav {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    width: min(1100px, 92%); padding: 10px 14px 10px 14px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    z-index: 100; border-radius: 999px;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+  .logo img {
+    width: 48px; height: 48px; border-radius: 14px; object-fit: cover;
+    border: 1px solid rgba(255,255,255,.9);
+    box-shadow: 0 2px 10px rgba(10,74,44,.18);
+  }
+  .logo-text { font-family: var(--serif); font-weight: 700; font-size: 1.5rem; letter-spacing: .3px; color: var(--emerald-deep); line-height: 1.05; }
+  .logo-text span { color: var(--gold); }
+  .logo-sub { font-size: .66rem; color: var(--ink-soft); font-weight: 600; letter-spacing: 2px; }
+  .nav-links { display: flex; gap: 6px; list-style: none; }
+  .nav-links a {
+    display: block; color: var(--ink); text-decoration: none; font-size: .92rem; font-weight: 500;
+    padding: 8px 16px; border-radius: 999px; transition: background .25s, color .25s;
+  }
+  .nav-links a:hover { background: rgba(15,107,63,.1); color: var(--emerald-deep); }
+
+  /* ---------- Buttons ---------- */
+  .cta-btn, .btn-primary, .select-btn, button[type="submit"] {
+    position: relative; overflow: hidden; display: inline-block; cursor: pointer;
+    font-family: inherit; font-weight: 600; text-decoration: none; text-align: center;
+    background: linear-gradient(135deg, var(--emerald-bright) -20%, var(--emerald) 40%, var(--emerald-deep) 110%);
+    color: #fff; border: 1px solid rgba(10,74,44,.6); border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(15,107,63,.28), inset 0 1px 0 rgba(255,255,255,.4);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .cta-btn::after, .btn-primary::after, .select-btn::after, button[type="submit"]::after { /* gloss */
+    content: ""; position: absolute; inset: 0 0 50% 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,0));
+  }
+  .cta-btn:hover, .btn-primary:hover, .select-btn:hover, button[type="submit"]:hover {
+    transform: translateY(-2px); box-shadow: 0 12px 30px rgba(15,107,63,.36), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .cta-btn { padding: 11px 24px; font-size: .92rem; }
+  .btn-primary { padding: 16px 38px; }
+  .btn-secondary {
+    display: inline-block; padding: 16px 38px; border-radius: 999px; font-weight: 600; text-decoration: none;
+    color: var(--emerald-deep); background: rgba(255,255,255,.5);
+    -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%);
+    border: 1.5px solid var(--gold);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 6px 18px rgba(184,145,58,.18);
+    transition: transform .2s, background .2s;
+  }
+  .btn-secondary:hover { transform: translateY(-2px); background: rgba(255,255,255,.8); }
+  :focus-visible { outline: 3px solid var(--gold-light); outline-offset: 3px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 140px 20px 80px; max-width: none;
+  }
+  .eyebrow { font-size: .78rem; letter-spacing: .24em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 18px; }
+  .hero h1 {
+    font-family: var(--serif); font-size: clamp(2.9rem, 7.5vw, 5.2rem); font-weight: 700;
+    letter-spacing: -.5px; line-height: 1.04; margin-bottom: 22px; color: var(--emerald-deep);
+  }
+  .hero h1 span {
+    background: linear-gradient(120deg, var(--gold) 10%, var(--gold-light) 50%, var(--gold) 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { font-size: 1.18rem; color: var(--ink-soft); max-width: 580px; margin-bottom: 38px; }
+  .hero p.eyebrow { font-size: .78rem; color: var(--gold); margin-bottom: 18px; }
+  .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .hero-logo { margin-top: 56px; padding: 12px; border-radius: 30px; width: min(300px, 70vw); }
+  .hero-logo img { width: 100%; height: auto; border-radius: 20px; display: block; }
+
+  /* ---------- Sections ---------- */
+  section { max-width: 1100px; margin: 0 auto; padding: 80px 20px; }
+  .section-title { font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; color: var(--emerald-deep); line-height: 1.1; margin-bottom: 10px; }
+  .section-sub { color: var(--ink-soft); margin-bottom: 46px; font-size: 1.05rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .card { padding: 32px; transition: transform .3s, box-shadow .3s; }
+  .card:hover { transform: translateY(-6px); box-shadow: 0 22px 50px rgba(10,74,44,.18), inset 0 1px 0 #fff; }
+  .card h3 { font-family: var(--serif); font-size: 1.5rem; color: var(--emerald-deep); margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+  .card p { color: var(--ink-soft); font-size: .97rem; }
+  .icon {
+    flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
+    background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(217,185,104,.35));
+    border: 1px solid rgba(184,145,58,.45); box-shadow: inset 0 1px 0 #fff, 0 4px 12px rgba(184,145,58,.2);
+  }
+  .icon svg { width: 22px; height: 22px; stroke: var(--emerald); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+  .demo-box { padding: 48px; text-align: center; }
+  .demo-box h3 { font-family: var(--serif); font-size: 1.7rem; color: var(--emerald-deep); margin-bottom: 6px; }
+  .demo-box p { color: var(--ink-soft); }
+  .demo-placeholder {
+    height: 280px; margin-top: 26px; border-radius: 18px; display: grid; place-items: center; padding: 20px;
+    color: var(--ink-soft); background: rgba(255,255,255,.35);
+    border: 1.5px dashed var(--gold); box-shadow: inset 0 2px 14px rgba(184,145,58,.12);
+  }
+
+  /* ---------- Pricing ---------- */
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: stretch; }
+  .price-card { padding: 34px 28px 28px; display: flex; flex-direction: column; transition: transform .3s, box-shadow .3s; overflow: visible; }
+  .price-card:hover { transform: translateY(-8px); box-shadow: 0 24px 54px rgba(10,74,44,.2), inset 0 1px 0 #fff; }
   .price-card.popular {
-    border-color: rgba(0, 229, 255, 0.45);
-    background: rgba(0, 229, 255, 0.06);
+    border-color: rgba(184,145,58,.8);
+    background: linear-gradient(145deg, rgba(255,255,255,.85), rgba(217,185,104,.28));
+    box-shadow: 0 18px 50px rgba(184,145,58,.28), inset 0 1px 0 #fff, inset 0 0 0 1px rgba(217,185,104,.5);
   }
   .popular-badge {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent);
-    color: #05050a;
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 4px 14px;
-    border-radius: 20px;
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold)); color: #3d2d06;
+    font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    padding: 5px 16px; border-radius: 999px; box-shadow: 0 4px 12px rgba(184,145,58,.4), inset 0 1px 0 rgba(255,255,255,.6);
   }
-  .price-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
-  .price {
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin: 12px 0 6px;
+  .price-card h3 { font-family: var(--serif); font-size: 1.55rem; color: var(--emerald-deep); }
+  .price { font-family: var(--serif); font-size: 2.8rem; font-weight: 700; color: var(--emerald); margin: 8px 0 4px; line-height: 1.1; }
+  .price span { font-family: var(--sans); font-size: .9rem; color: var(--ink-soft); font-weight: 500; }
+  .price-card ul { list-style: none; margin: 20px 0 26px; flex: 1; }
+  .price-card li { padding: 7px 0; font-size: .95rem; color: var(--ink); display: flex; gap: 10px; border-bottom: 1px solid rgba(184,145,58,.16); }
+  .price-card li:last-child { border-bottom: 0; }
+  .price-card li::before { content: "✓"; color: var(--gold); font-weight: 700; }
+  .select-btn { display: block; width: 100%; padding: 14px; }
+  .price-card:not(.popular) .select-btn {
+    background: rgba(255,255,255,.55); color: var(--emerald-deep); border: 1.5px solid var(--gold);
+    box-shadow: inset 0 1px 0 #fff, 0 6px 16px rgba(184,145,58,.16);
   }
-  .price span {
-    font-size: 1rem;
-    color: #8a9bb5;
-    font-weight: 500;
-  }
-  .price-card ul { list-style: none; margin: 24px 0; }
-  .price-card li {
-    padding: 8px 0;
-    font-size: 0.95rem;
-    color: #c8d4e6;
-    display: flex;
-    gap: 10px;
-  }
-  .price-card li::before {
-    content: "✓";
-    color: var(--accent);
-    font-weight: 700;
-  }
-  .select-btn {
-    display: block;
-    width: 100%;
-    text-align: center;
-    background: var(--accent-soft);
-    color: var(--accent);
-    border: 1px solid rgba(0, 229, 255, 0.3);
-    padding: 14px;
-    border-radius: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.25s;
-  }
-  .select-btn:hover { background: rgba(0, 229, 255, 0.25); }
-  .popular .select-btn {
-    background: var(--accent);
-    color: #05050a;
-    border: none;
-  }
+  .price-card:not(.popular) .select-btn::after { display: none; }
+  .price-card:not(.popular) .select-btn:hover { background: #fff; }
 
-  .extra-info {
-    margin-top: 50px;
-    padding: 32px;
-  }
-  .extra-info h4 {
-    margin-bottom: 12px;
-    color: var(--accent);
-  }
-  .extra-info p, .extra-info li {
-    color: #a0b0c8;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 8px;
-  }
+  .extra-info { margin-top: 50px; padding: 34px; }
+  .extra-info h4 { font-family: var(--serif); font-size: 1.35rem; margin-bottom: 10px; color: var(--emerald-deep); }
+  .extra-info p, .extra-info li { color: var(--ink-soft); font-size: .95rem; margin-bottom: 8px; }
+  .extra-info h4 + ul, .extra-info h4 + p { margin-top: 0; }
 
-  .contact-form {
-    max-width: 520px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  /* ---------- Contact ---------- */
+  .contact-form { max-width: 540px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; padding: 36px; }
   input, textarea, select {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 16px 18px;
-    color: #e8eef7;
-    font-family: inherit;
-    font-size: 1rem;
-    outline: none;
+    width: 100%; background: rgba(255,255,255,.6); color: var(--ink); font-family: inherit; font-size: 1rem;
+    border: 1px solid rgba(184,145,58,.4); border-radius: 14px; padding: 15px 18px; outline: none;
+    box-shadow: inset 0 2px 6px rgba(10,74,44,.06); transition: border-color .2s, box-shadow .2s, background .2s;
   }
-  select option { background: #0a0a12; }
-  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  input::placeholder, textarea::placeholder { color: #6f7f77; }
+  input:focus, textarea:focus, select:focus { border-color: var(--emerald); background: #fff; box-shadow: 0 0 0 3px rgba(31,157,87,.18); }
   textarea { min-height: 120px; resize: vertical; }
-  button[type="submit"] {
-    background: var(--accent);
-    color: #05050a;
-    border: none;
-    padding: 16px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-  }
+  button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 14px; }
+  button[type="submit"][disabled] { opacity: .65; cursor: progress; }
+  .form-status { font-size: .93rem; min-height: 1.4em; text-align: center; color: var(--emerald-deep); }
+  .form-status.err { color: #8a2d1c; }
 
-  footer {
-    text-align: center;
-    padding: 50px 20px 40px;
-    color: #5a6a80;
-    font-size: 0.9rem;
-    line-height: 1.7;
-  }
-  footer a {
-    color: var(--accent);
-    text-decoration: none;
-  }
+  footer { text-align: center; padding: 50px 20px 44px; color: var(--ink-soft); font-size: .88rem; line-height: 1.8; max-width: 760px; margin: 0 auto; }
+  footer strong { font-family: var(--serif); font-size: 1.3rem; color: var(--emerald-deep); }
+  footer a { color: var(--emerald); text-decoration-color: var(--gold-light); text-underline-offset: 3px; }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+
+  /* ---------- Enquiry form (added) ---------- */
+  .form-title { font-family: var(--serif); font-size: 1.7rem; color: var(--emerald-deep); margin-bottom: 2px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; border: 0; min-width: 0; }
+  .field[hidden], [hidden] { display: none !important; }
+  .field label, fieldset legend { font-size: .86rem; font-weight: 600; color: var(--ink); }
+  .field label b { color: var(--gold); }
+  .opt { font-weight: 400; color: var(--ink-soft); }
+  .field-error { color: #8a2d1c; font-size: .82rem; min-height: 0; }
+  .field-error:empty { display: none; }
+  .field.has-error input, .field.has-error select, .field.has-error textarea { border-color: #b4412b; box-shadow: 0 0 0 3px rgba(180,65,43,.14); }
+  fieldset.method { padding: 0; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; }
+  fieldset.method legend { float: left; width: 100%; margin-bottom: 8px; padding: 0; }
+  .pill { cursor: pointer; }
+  .pill input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .pill span { display: inline-block; padding: 10px 20px; border-radius: 999px; font-size: .92rem; font-weight: 500;
+    background: rgba(255,255,255,.6); border: 1.5px solid rgba(184,145,58,.45); transition: all .2s; }
+  .pill input:checked + span { background: linear-gradient(135deg, var(--emerald), var(--emerald-deep)); color: #fff; border-color: var(--emerald-deep); box-shadow: 0 6px 16px rgba(15,107,63,.25); }
+  .pill input:focus-visible + span { outline: 3px solid var(--gold-light); outline-offset: 2px; }
+  .check { display: flex; gap: 12px; align-items: flex-start; font-size: .88rem !important; font-weight: 400 !important; color: var(--ink-soft) !important; cursor: pointer; }
+  .check input { width: 20px; height: 20px; flex: none; margin-top: 2px; padding: 0; accent-color: var(--emerald); box-shadow: none; }
+  .hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .notice-inline { font-size: .88rem; color: #5b4712; background: rgba(251,246,230,.85); border: 1px solid var(--gold-light); border-left: 4px solid var(--gold); border-radius: 12px; padding: 12px 14px; }
+  .form-status { line-height: 1.5; }
+  .form-status.ok { color: var(--emerald-deep); background: rgba(227,243,234,.8); border: 1px solid #b9dfc9; border-radius: 12px; padding: 12px 14px; }
+  .form-status.err { color: #7a2616; background: rgba(250,232,228,.85); border: 1px solid #e3b5ab; border-radius: 12px; padding: 12px 14px; }
+  .form-status.info { color: #5b4712; background: rgba(251,246,230,.85); border: 1px solid var(--gold-light); border-radius: 12px; padding: 12px 14px; }
+  .form-status:empty { padding: 0; border: 0; background: none; }
+  .form-status a { color: inherit; font-weight: 600; }
+  button[type="submit"].loading { position: relative; }
+  button[type="submit"].loading::before { content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 10px; vertical-align: -2px;
+    border: 2px solid rgba(255,255,255,.5); border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .contact-form { max-width: 680px; }
+  .privacy { max-width: 680px; margin: 22px auto 0; padding: 18px 26px; border-radius: 18px; }
+  .privacy summary { cursor: pointer; font-weight: 600; color: var(--emerald-deep); }
+  .privacy ul { margin: 14px 0 4px 18px; color: var(--ink-soft); font-size: .92rem; }
+  .privacy li { margin-bottom: 8px; }
+  @media (max-width: 700px) { .row2 { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { button[type="submit"].loading::before { animation: none; } }
 
   @media (max-width: 700px) {
     .nav-links { display: none; }
-    .hero h1 { font-size: 2.6rem; }
-    .logo img { height: 40px; }
-    .logo-text { font-size: 1.2rem; }
+    nav { padding: 8px 10px; }
+    .logo img { width: 42px; height: 42px; }
+    .logo-text { font-size: 1.25rem; }
+    .demo-box, .contact-form, .extra-info { padding: 26px 20px; }
+    .orb { filter: blur(50px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .orb { animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .glass::before, .card, .price-card { transition: none; }
   }
 </style>
 </head>
 <body>
-  <div class="bg">
+  <div id="topBanner" role="status"></div>
+
+  <div class="bg" aria-hidden="true">
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
     <div class="orb orb3"></div>
   </div>
 
-  <nav class="glass">
-    <a href="#" class="logo">
-      <img src="logo.png" alt="Core Dynamics Logo">
+  <nav class="glass" aria-label="Main">
+    <a href="#" class="logo" aria-label="Core Dynamics home">
+      <img src="logo.png" alt="Core Dynamics logo">
       <div>
         <div class="logo-text">Core <span>Dynamics</span></div>
         <div class="logo-sub">WEB DEVELOPMENT</div>
@@ -396,86 +357,87 @@
     <a href="#pricing" class="cta-btn">View Plans</a>
   </nav>
 
+  <main>
   <section class="hero">
-    <h1>Affordable Websites<br><span>That Look Premium</span></h1>
+    <p class="eyebrow">A part of NCORE</p>
+    <h1 id="heroHeadline">Affordable Websites<br><span>That Look Premium</span></h1>
     <p>Core Dynamics builds clean, mobile-friendly business websites with transparent pricing and fast delivery.</p>
     <div class="hero-buttons">
       <a href="#pricing" class="btn-primary">See Packages</a>
       <a href="#contact" class="btn-secondary">Talk to Us</a>
     </div>
+    <div class="hero-logo glass"><img src="logo.png" alt="Core Dynamics — Web Development, a part of NCORE"></div>
   </section>
 
   <section id="services">
-    <h2 class="section-title">What we deliver</h2>
-    <p class="section-sub">Clean design. Clear results.</p>
+    <h2 class="section-title reveal">What we deliver</h2>
+    <p class="section-sub reveal">Clean design. Clear results.</p>
     <div class="grid">
-      <div class="card glass">
-        <h3><div class="icon">🌐</div> Business Websites</h3>
+      <div class="card glass reveal">
+        <h3><span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span> Business Websites</h3>
         <p>One-page and multi-section sites that look professional on every device.</p>
       </div>
-      <div class="card glass">
-        <h3><div class="icon">📱</div> Mobile-First Design</h3>
-        <p>Fully responsive layouts with Call & WhatsApp buttons for easy contact.</p>
+      <div class="card glass reveal">
+        <h3><span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span> Mobile-First Design</h3>
+        <p>Fully responsive layouts with Call &amp; WhatsApp buttons for easy contact.</p>
       </div>
-      <div class="card glass">
-        <h3><div class="icon">⚡</div> Fast Delivery</h3>
+      <div class="card glass reveal">
+        <h3><span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></svg></span> Fast Delivery</h3>
         <p>Affordable packages with quick turnaround and clear communication.</p>
       </div>
     </div>
   </section>
 
   <section id="demos">
-    <h2 class="section-title">Live Demos</h2>
-    <p class="section-sub">See the quality of our work</p>
-    <div class="demo-box glass">
-      <h3 style="margin-bottom: 8px;">Website Demo Preview</h3>
-      <p style="color:#8a9bb5;">Interactive demos and sample sites will appear here.</p>
-      <div class="demo-placeholder">
-        Demo Player / Sample Website Area
-      </div>
+    <h2 class="section-title reveal">Live Demos</h2>
+    <p class="section-sub reveal">See the quality of our work</p>
+    <div class="demo-box glass reveal">
+      <h3>Website Demo Preview</h3>
+      <p>Interactive demos and sample sites will appear here.</p>
+      <div class="demo-placeholder">Demo sites are being prepared. They will be labelled as demos, not client work.</div>
     </div>
   </section>
 
   <section id="pricing">
-    <h2 class="section-title">Website Packages</h2>
-    <p class="section-sub">Simple & transparent pricing</p>
+    <h2 class="section-title reveal">Website Packages</h2>
+    <p class="section-sub reveal">Simple &amp; transparent pricing</p>
 
     <div class="pricing-grid">
-      <div class="price-card glass">
-        <h3>🌐 Starter Website</h3>
+      <div class="price-card glass reveal">
+        <h3>Starter Website</h3>
         <div class="price">₹799 <span>/ one-time</span></div>
         <ul>
           <li>One-page business website</li>
-          <li>Business name, description & contact</li>
+          <li>Business name, description &amp; contact</li>
           <li>Mobile-friendly layout</li>
-          <li>Call & WhatsApp buttons</li>
+          <li>Call &amp; WhatsApp buttons</li>
           <li>Basic deployment + live link</li>
         </ul>
         <a href="#contact" class="select-btn" onclick="selectPlan('Starter Website - ₹799')">Select Plan</a>
       </div>
 
-      <div class="price-card glass popular">
+      <div class="price-card glass popular reveal">
         <div class="popular-badge">Most Popular</div>
-        <h3>☕ Business Website</h3>
+        <h3>Business Website</h3>
         <div class="price">₹1,499 <span>/ one-time</span></div>
         <ul>
           <li>Everything in Starter</li>
           <li>Menu / Services with prices</li>
           <li>Photo gallery</li>
           <li>Google Maps + directions</li>
-          <li>Opening hours & social links</li>
+          <li>Opening hours &amp; social links</li>
           <li>More customized design</li>
         </ul>
         <a href="#contact" class="select-btn" onclick="selectPlan('Business Website - ₹1,499')">Select Plan</a>
       </div>
 
-      <div class="price-card glass">
-        <h3>✨ Premium Website</h3>
+      <div class="price-card glass reveal">
+        <h3>Premium Website</h3>
         <div class="price">₹2,499 <span>/ one-time</span></div>
         <ul>
           <li>Everything in Business</li>
           <li>Additional content sections</li>
-          <li>Enhanced visual design & branding</li>
+          <li>Enhanced visual design &amp; branding</li>
           <li>More customized layout</li>
           <li>Extra design revisions</li>
         </ul>
@@ -483,15 +445,15 @@
       </div>
     </div>
 
-    <div class="extra-info glass">
+    <div class="extra-info glass reveal">
       <h4>Hosting Options</h4>
-      <p>🌱 Free hosting available on eligible free plans (Netlify / Cloudflare Pages subdomain).</p>
-      <p>🌐 Custom domain can be purchased and connected.</p>
+      <p>Free hosting available on eligible free plans (Netlify / Cloudflare Pages subdomain).</p>
+      <p>Custom domain can be purchased and connected.</p>
 
-      <h4 style="margin-top:24px;">Custom Domain & Setup</h4>
+      <h4 style="margin-top:24px;">Custom Domain &amp; Setup</h4>
       <ul style="list-style:none; padding:0;">
         <li>• Domain registration: Actual registrar price (confirmed before purchase)</li>
-        <li>• Domain connection & setup: ₹300 one-time</li>
+        <li>• Domain connection &amp; setup: ₹300 one-time</li>
         <li>• Domain renewal: Paid separately when due</li>
       </ul>
 
@@ -504,29 +466,131 @@
   </section>
 
   <section id="contact">
-    <h2 class="section-title" style="text-align:center;">Let’s get started</h2>
-    <p class="section-sub" style="text-align:center;">
-      Email: <a href="mailto:ncoreopc@gmail.com" style="color:#00e5ff;">ncoreopc@gmail.com</a>
+    <h2 class="section-title reveal" style="text-align:center;">Let’s get started</h2>
+    <p class="section-sub reveal" style="text-align:center;">
+      Tell us about your project and we’ll get back to you.
+      <span data-contact-wrap>Prefer email? <a data-contact-email href="#"></a></span>
     </p>
 
-    <form class="contact-form glass" style="padding: 36px;" onsubmit="submitForm(event)">
-      <input type="text" id="name" placeholder="Your name" required>
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="tel" id="phone" placeholder="Phone / WhatsApp number" required>
-      <input type="text" id="business" placeholder="Business name">
+    <form class="contact-form glass reveal" id="enquiryForm" novalidate aria-labelledby="enquiryTitle">
+      <h3 id="enquiryTitle" class="form-title">Project enquiry</h3>
+      <p id="endpointNotice" class="notice-inline" role="note" hidden></p>
 
-      <select id="plan" required>
-        <option value="" disabled selected>Select a package</option>
-        <option value="Starter Website - ₹799">Starter Website — ₹799</option>
-        <option value="Business Website - ₹1,499">Business Website — ₹1,499</option>
-        <option value="Premium Website - ₹2,499">Premium Website — ₹2,499</option>
-        <option value="Just Inquiry">Just an inquiry / Not sure yet</option>
-      </select>
+      <div class="row2">
+        <div class="field" data-field="name">
+          <label for="name">Full name <b aria-hidden="true">*</b></label>
+          <input type="text" id="name" name="name" autocomplete="name" maxlength="80" required aria-describedby="err-name">
+          <p class="field-error" id="err-name" aria-live="polite"></p>
+        </div>
+        <div class="field" data-field="phone">
+          <label for="phone">Phone number <b aria-hidden="true">*</b></label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" maxlength="20" required aria-describedby="err-phone">
+          <p class="field-error" id="err-phone" aria-live="polite"></p>
+        </div>
+      </div>
 
-      <textarea id="message" placeholder="Any extra details or questions..."></textarea>
-      <button type="submit">Send Message</button>
+      <div class="row2">
+        <div class="field" data-field="email">
+          <label for="email">Business email <b aria-hidden="true">*</b></label>
+          <input type="email" id="email" name="email" autocomplete="email" maxlength="120" required aria-describedby="err-email">
+          <p class="field-error" id="err-email" aria-live="polite"></p>
+        </div>
+        <div class="field" data-field="company">
+          <label for="company">Company name <span class="opt">(optional)</span></label>
+          <input type="text" id="company" name="company" autocomplete="organization" maxlength="100" aria-describedby="err-company">
+          <p class="field-error" id="err-company" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field" data-field="service">
+          <label for="service">Service required <b aria-hidden="true">*</b></label>
+          <select id="service" name="service" required aria-describedby="err-service">
+            <option value="" selected disabled>Choose a service</option>
+            <option>Business website</option>
+            <option>Café / restaurant website</option>
+            <option>Landing page</option>
+            <option>Portfolio website</option>
+            <option>Website redesign</option>
+            <option>Domain &amp; hosting setup</option>
+            <option>Maintenance plan</option>
+            <option>Something else</option>
+          </select>
+          <p class="field-error" id="err-service" aria-live="polite"></p>
+        </div>
+        <div class="field" data-field="budget">
+          <label for="budget">Estimated budget <span class="opt">(optional)</span></label>
+          <select id="budget" name="budget">
+            <option value="">Prefer not to say</option>
+            <option>Under ₹1,000</option>
+            <option>₹1,000 – ₹2,500</option>
+            <option>₹2,500 – ₹5,000</option>
+            <option>₹5,000+</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" data-field="package">
+        <label for="package">Package of interest <span class="opt">(optional)</span></label>
+        <select id="package" name="package">
+          <option value="">Not sure yet</option>
+          <option value="Starter Website - ₹799">Starter Website — ₹799</option>
+          <option value="Business Website - ₹1,499">Business Website — ₹1,499</option>
+          <option value="Premium Website - ₹2,499">Premium Website — ₹2,499</option>
+        </select>
+      </div>
+
+      <div class="field" data-field="message">
+        <label for="message">Project description <b aria-hidden="true">*</b></label>
+        <textarea id="message" name="message" maxlength="2000" required aria-describedby="err-message"
+          placeholder="What do you need, who is it for, and any deadline?"></textarea>
+        <p class="field-error" id="err-message" aria-live="polite"></p>
+      </div>
+
+      <fieldset class="field method">
+        <legend>Preferred contact method</legend>
+        <label class="pill"><input type="radio" name="contactMethod" value="Email" checked><span>Email</span></label>
+        <label class="pill"><input type="radio" name="contactMethod" value="Scheduled callback"><span>Scheduled callback</span></label>
+      </fieldset>
+
+      <div class="field" data-field="callbackTime" id="callbackWrap" hidden>
+        <label for="callbackTime">Best time to call <span class="opt">(optional)</span></label>
+        <input type="text" id="callbackTime" name="callbackTime" maxlength="80" placeholder="e.g. weekdays after 4 pm IST" aria-describedby="err-callbackTime">
+        <p class="field-error" id="err-callbackTime" aria-live="polite"></p>
+      </div>
+
+      <!-- Honeypot: hidden from people, irresistible to bots. Must stay empty. -->
+      <div class="hp" aria-hidden="true">
+        <label for="hp_url">Leave this field empty</label>
+        <input type="text" id="hp_url" name="hp_url" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div id="turnstileBox"></div>
+
+      <div class="field consent" data-field="consent">
+        <label class="check">
+          <input type="checkbox" id="consent" name="consent" required aria-describedby="err-consent">
+          <span>I agree that Core Dynamics may use these details to respond to my enquiry. <a href="#privacy">How we use them</a>. <b aria-hidden="true">*</b></span>
+        </label>
+        <p class="field-error" id="err-consent" aria-live="polite"></p>
+      </div>
+
+      <button type="submit">Send enquiry</button>
+      <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
     </form>
+
+    <details class="privacy glass reveal" id="privacy">
+      <summary>Privacy: how we use your details</summary>
+      <ul>
+        <li><strong>What we collect:</strong> only what you type into this form: name, phone, email, optional company, service, budget, project description, and your contact preference.</li>
+        <li><strong>Why:</strong> solely to reply to your enquiry and discuss your project. We don’t sell or share it for marketing.</li>
+        <li><strong>Where it’s stored:</strong> in a private Google Sheet that only Core Dynamics can open, with enquiry status tracked so we can follow up.</li>
+        <li><strong>Your choices:</strong> ask us to correct or delete your enquiry at any time<span data-contact-wrap> by emailing <a data-contact-email href="#"></a></span>.</li>
+      </ul>
+    </details>
   </section>
+  </main>
 
   <footer>
     <strong>Core Dynamics</strong> — Web Development<br>
@@ -534,157 +598,60 @@
     © 2026 Core Dynamics. All Rights Reserved.<br>
     This website and its content are the exclusive property of Core Dynamics.<br>
     Unauthorized copying, redistribution, or modification is strictly prohibited.<br><br>
-    Contact: <a href="mailto:ncoreopc@gmail.com">ncoreopc@gmail.com</a>
+    <span data-contact-wrap>Contact: <a data-contact-email href="#"></a><br></span><a href="#privacy" onclick="var d=document.getElementById('privacy');if(d)d.open=true">Privacy</a>
   </footer>
 
 <script>
-  function selectPlan(planName) {
-    document.getElementById('plan').value = planName;
-  }
-
-  function submitForm(e) {
-    e.preventDefault();
-    const data = {
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      phone: document.getElementById('phone').value,
-      business: document.getElementById('business').value,
-      plan: document.getElementById('plan').value,
-      message: document.getElementById('message').value,
-      date: new Date().toLocaleString()
-    };
-    let leads = JSON.parse(localStorage.getItem('core_leads') || '[]');
-    leads.push(data);
-    localStorage.setItem('core_leads', JSON.stringify(leads));
-    alert('Thank you! Your message has been received.\nI will contact you soon.');
-    e.target.reset();
-  }
-</script>
-<script>
-  const FIREBASE_URL = "https://console.firebase.google.com/u/3/project/coredynamics-ea139/database/coredynamics-ea139-default-rtdb/data/~2F"; // Same URL as your APK
-
-  // 1. Apply live controls from the Admin APK
-  async function loadSiteControlFromApp() {
-    const res = await fetch(`${FIREBASE_URL}/siteConfig.json`);
-    const cfg = await res.json();
-    if (!cfg) return;
-
-    if (cfg.status === "maintenance") {
-      document.body.innerHTML = `<div style="display:flex;height:100vh;align-items:center;justify-content:center;background:#0b0f19;color:#fff;font-family:sans-serif;text-align:center;padding:20px;"><div><h1>Under Scheduled Maintenance</h1><p style="color:#94a3b8;margin-top:10px;">${cfg.banner || "We will be back shortly."}</p></div></div>`;
-      return;
-    }
-    const heroEl = document.getElementById("heroHeadline"); // Add id="heroHeadline" to your main <h1>
-    if (heroEl && cfg.hero) heroEl.innerText = cfg.hero;
-
-    const bannerEl = document.getElementById("topBanner"); // Add id="topBanner" to a top bar div
-    if (bannerEl && cfg.banner) { bannerEl.innerText = cfg.banner; bannerEl.style.display = "block"; }
-  }
-  loadSiteControlFromApp();
-
-  // 2. Call this function from your website's Contact Form submit event
-  async function sendLeadToAdminApp(name, phone, service, notes) {
-    const id = Date.now().toString();
-    await fetch(`${FIREBASE_URL}/leads/${id}.json`, {
-      method: "PUT",
-      body: JSON.stringify({ id, name, phone, service, notes, status: "New", date: new Date().toLocaleDateString() })
-    });
-    alert("Thank you! Our team has received your inquiry.");
-  }
+  /* Gentle reveal on scroll */
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: .12 });
+    els.forEach(function (e) { io.observe(e); });
+  })();
 </script>
 
-  <!-- CORE DYNAMICS ADMIN APK LIVE BRIDGE -->
+<script src="site-config.js"></script>
+<script src="enquiry.js"></script>
+
+<!-- Live site controls from the admin app (banner / hero headline / maintenance).
+     Lead handling now lives in enquiry.js. -->
 <script>
-(function() {
-  var DB_URL = "https://coredynamics-ea139-default-rtdb.firebaseio.com";
-  var chosenPackage = "";
+(function () {
+  var CFG = window.CD_CONFIG || {};
+  if (!CFG.FIREBASE_DB_URL) return;
 
-  // Remember if a visitor clicks any Package / Pricing button on the page
-  document.addEventListener("click", function(e) {
-    var btn = e.target.closest("a, button");
-    if (!btn) return;
-    var card = btn.closest(".pricing-card, .plan-card, .package-card, .card, .glass");
-    if (card) {
-      var titleEl = card.querySelector("h2, h3, h4, .plan-name, .title");
-      var priceEl = card.querySelector(".price, .amount, strong");
-      if (titleEl && (btn.innerText.match(/plan|start|choose|select|get|book|buy|quote/i))) {
-        chosenPackage = titleEl.innerText.trim() + (priceEl ? " (" + priceEl.innerText.trim() + ")" : "");
-      }
-    }
-  });
-
-  // 1. Live Website Remote Control (Banner, Hero Headline, Phone, Maintenance)
-  fetch(DB_URL + "/siteConfig.json?t=" + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(cfg) {
+  fetch(CFG.FIREBASE_DB_URL + "/siteConfig.json?t=" + Date.now())
+    .then(function (r) { return r.json(); })
+    .then(function (cfg) {
       if (!cfg) return;
+
       if (cfg.status === "maintenance") {
-        document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;background:#0b0f19;color:#f8fafc;font-family:sans-serif;text-align:center;padding:24px;"><div><h1 style="color:#3b82f6;margin-bottom:12px;">Core Dynamics</h1><h2>Under Scheduled Maintenance</h2><p style="color:#94a3b8;margin-top:10px;">' + (cfg.banner || 'We will be back shortly.') + '</p></div></div>';
+        document.body.textContent = "";
+        document.body.style.cssText = "display:grid;place-items:center;min-height:100vh;padding:24px;text-align:center;background:#f6f4ee;color:#14211b;font-family:Inter,system-ui,sans-serif;";
+        var box = document.createElement("div");
+        var h = document.createElement("h1"); h.textContent = "Core Dynamics"; h.style.cssText = "font-family:'Cormorant Garamond',Georgia,serif;color:#0a4a2c;margin-bottom:10px;";
+        var h2 = document.createElement("h2"); h2.textContent = "Under Scheduled Maintenance"; h2.style.cssText = "font-weight:600;";
+        var p = document.createElement("p"); p.textContent = cfg.banner || "We will be back shortly."; p.style.cssText = "color:#4a5a52;margin-top:10px;";
+        box.append(h, h2, p); document.body.appendChild(box);
         return;
       }
       if (cfg.banner) {
-        var bar = document.createElement("div");
-        bar.style.cssText = "background:#3b82f6;color:#fff;text-align:center;padding:10px 16px;font-size:14px;font-weight:600;position:fixed;top:0;left:0;right:0;z-index:99999;box-shadow:0 2px 10px rgba(0,0,0,0.4);";
-        bar.innerText = cfg.banner;
-        document.body.prepend(bar);
-        document.body.style.paddingTop = "42px";
+        var bar = document.getElementById("topBanner");
+        bar.textContent = cfg.banner;       /* textContent: safe even if the database is edited by others */
+        bar.style.display = "block";
+        document.body.classList.add("has-banner");
       }
       if (cfg.hero) {
-        var h1 = document.querySelector("h1");
-        if (h1) h1.innerText = cfg.hero;
+        var h1 = document.getElementById("heroHeadline");
+        if (h1) h1.textContent = cfg.hero;
       }
-      if (cfg.phone) {
-        var clean = cfg.phone.replace(/[^0-9]/g, "");
-        document.querySelectorAll('a[href*="wa.me"], a[href^="tel:"]').forEach(function(a) {
-          if (a.href.includes("wa.me")) a.href = "https://wa.me/" + clean;
-          if (a.href.startsWith("tel:")) a.href = "tel:" + cfg.phone;
-        });
-      }
-    }).catch(function(e) {});
-
-  // 2. Send Contact Form + Selected Package to Admin App
-  window.addEventListener("load", function() {
-    window.submitForm = function(event) {
-      if (event) event.preventDefault();
-      var form = (event && event.target) ? event.target : document.querySelector(".contact-form");
-      var name = (document.getElementById("name") && document.getElementById("name").value.trim()) || "Website Visitor";
-      var email = (document.getElementById("email") && document.getElementById("email").value.trim()) || "";
-      var phone = (document.getElementById("phone") && document.getElementById("phone").value.trim()) || "";
-      var business = (document.getElementById("business") && document.getElementById("business").value.trim()) || "";
-      var message = (document.getElementById("message") && document.getElementById("message").value.trim()) || "";
-
-      var selectEl = form ? form.querySelector("select") : document.querySelector("select");
-      var selectedOption = (selectEl && selectEl.value) ? selectEl.value.trim() : "";
-      var pkg = selectedOption || chosenPackage || business || "Custom Package";
-
-      var id = Date.now().toString();
-      var payload = {
-        id: id,
-        name: name,
-        phone: phone || email || "No Phone",
-        service: pkg,
-        packagePlan: pkg,
-        paymentStatus: "Unpaid",
-        totalFee: "",
-        paidAmount: "",
-        notes: (business ? "Business: " + business + " | " : "") + (email ? "Email: " + email + " | " : "") + message,
-        status: "New",
-        date: new Date().toLocaleDateString()
-      };
-
-      fetch(DB_URL + "/leads/" + id + ".json", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).then(function(res) {
-        if (res.ok) {
-          alert("Thank you " + name + "! Your package inquiry (" + pkg + ") has been received.");
-          if (form && form.reset) form.reset();
-        }
-      });
-    };
-  });
+      /* The old "cfg.phone" override was removed on purpose: no phone number can be injected into the site. */
+    })
+    .catch(function () { /* admin app unreachable: show the normal site */ });
 })();
 </script>
-
 </body>
 </html>
