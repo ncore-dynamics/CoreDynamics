@@ -13,7 +13,7 @@ window.CD_CONFIG = {
   /* Google Apps Script web-app URL (ends in /exec). See apps-script/SETUP.md.
      While this is "", the form does NOT claim to send anything: it tells the
      visitor online submission isn't switched on and offers an email instead. */
-  ENQUIRY_ENDPOINT: "https://docs.google.com/spreadsheets/d/1njewnQiNd28sBUCCHSqIMTt2J1qHFo19aAJdHXG3DH0/edit?usp=drivesdk",
+  ENQUIRY_ENDPOINT: "https://script.google.com/macros/s/AKfycbznlJJ1Shm4r6shRDXGYW0RLbCWqJtTDfeyPLtmmgh4fYx4vBN2uZXKfdz7A0NxeuDt/exec",
 
   /* Optional Cloudflare Turnstile SITE key (the public one). Leave "" to disable.
      The matching SECRET key goes in Apps Script > Project Settings > Script
