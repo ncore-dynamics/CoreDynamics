@@ -27,5 +27,21 @@ window.CD_CONFIG = {
   /* Old behaviour: also copy each enquiry into Firebase /leads for the admin app.
      OFF by default because that stores personal details in a database that
      accepts public writes. Turn on only after you have locked the database rules. */
-  FIREBASE_LEAD_MIRROR: false
+  FIREBASE_LEAD_MIRROR: true,
+
+  /* ---- Demo websites shown in the "Live Demos" section ---------------------
+     Add one block per demo. Only title + url are required.
+       title        name shown on the card
+       type         short label, e.g. "Café website"
+       description  one or two lines
+       url          your GitHub Pages link
+       image        OPTIONAL screenshot file, e.g. "demos/cafe.jpg" (faster than live preview)
+       tags         OPTIONAL list of short labels
+     Leave DEMOS empty ([]) and the section shows "being prepared". */
+  DEMOS: [
+     { title: "Café Demo", type: "Café website", description: "Sample café site with menu and gallery.", url: "https://ncore-dynamics.github.io/LittelOvenCafe-demo/", tags: ["Menu", "Gallery"] },
+       { title: "Portfolio Demo", type: "Portfolio website", description: "Clean portfolio for creators.", url: "https://YOUR-USERNAME.github.io/YOUR-PORTFOLIO-REPO/", tags: ["Portfolio"] },
+         { title: "Business Demo", type: "Business website", description: "One-page site for a local business.", url: "https://YOUR-USERNAME.github.io/YOUR-BUSINESS-REPO/", tags: ["One page"] }
+         ]
+  ]
 };

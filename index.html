@@ -315,6 +315,26 @@
   @media (max-width: 700px) { .row2 { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) { button[type="submit"].loading::before { animation: none; } }
 
+  /* ---------- Demo showcase ---------- */
+  .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .demo-grid:empty { display: none; }
+  .demo-card { padding: 14px 14px 22px; display: flex; flex-direction: column; transition: transform .3s, box-shadow .3s; }
+  .demo-card:hover { transform: translateY(-6px); box-shadow: 0 22px 50px rgba(10,74,44,.18), inset 0 1px 0 #fff; }
+  .demo-shot { position: relative; aspect-ratio: 16 / 10; border-radius: 14px; overflow: hidden; background: #ece7d8;
+    border: 1px solid rgba(184,145,58,.35); box-shadow: inset 0 2px 10px rgba(10,74,44,.08); }
+  .demo-shot img, .demo-shot iframe { position: absolute; top: 0; left: 0; border: 0; }
+  .demo-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .demo-shot iframe { width: 1280px; height: 800px; transform-origin: 0 0; pointer-events: none; background: #fff; }
+  .demo-badge { position: absolute; top: 10px; left: 10px; z-index: 2; font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    padding: 4px 11px; border-radius: 999px; background: rgba(255,255,255,.9); color: #7a5d16; border: 1px solid var(--gold-light); }
+  .demo-body { padding: 18px 8px 0; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .demo-body h3 { font-family: var(--serif); font-size: 1.5rem; color: var(--emerald-deep); line-height: 1.15; }
+  .demo-body p { color: var(--ink-soft); font-size: .95rem; }
+  .demo-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .demo-tags span { font-size: .74rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: rgba(15,107,63,.09); color: var(--emerald-deep); }
+  .demo-body .btn-primary { margin-top: auto; padding: 12px 22px; font-size: .92rem; align-self: flex-start; }
+  .demo-note { margin-top: 18px; font-size: .85rem; color: var(--ink-soft); text-align: center; }
+
   @media (max-width: 700px) {
     .nav-links { display: none; }
     nav { padding: 8px 10px; }
@@ -391,7 +411,8 @@
   <section id="demos">
     <h2 class="section-title reveal">Live Demos</h2>
     <p class="section-sub reveal">See the quality of our work</p>
-    <div class="demo-box glass reveal">
+    <div class="demo-grid" id="demoGrid"></div>
+    <div class="demo-box glass reveal" id="demoEmpty">
       <h3>Website Demo Preview</h3>
       <p>Interactive demos and sample sites will appear here.</p>
       <div class="demo-placeholder">Demo sites are being prepared. They will be labelled as demos, not client work.</div>
@@ -615,6 +636,7 @@
 
 <script src="site-config.js"></script>
 <script src="enquiry.js"></script>
+<script src="demos.js"></script>
 
 <!-- Live site controls from the admin app (banner / hero headline / maintenance).
      Lead handling now lives in enquiry.js. -->
