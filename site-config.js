@@ -40,8 +40,8 @@ window.CD_CONFIG = {
      Leave DEMOS empty ([]) and the section shows "being prepared". */
   DEMOS: [
      { title: "Café Demo", type: "Café website", description: "Sample café site with menu and gallery.", url: "https://ncore-dynamics.github.io/LittelOvenCafe-demo/", tags: ["Menu", "Gallery"] },
-       { title: "Portfolio Demo", type: "Portfolio website", description: "Clean portfolio for creators.", url: "https://YOUR-USERNAME.github.io/YOUR-PORTFOLIO-REPO/", tags: ["Portfolio"] },
-         { title: "Business Demo", type: "Business website", description: "One-page site for a local business.", url: "https://YOUR-USERNAME.github.io/YOUR-BUSINESS-REPO/", tags: ["One page"] }
+       { title: "Portfolio Demo", type: "Portfolio website", description: "Clean portfolio for creators.", url: "https://ncore-dynamics.github.io/DemoPortfolio/", tags: ["Portfolio"] },
+         { title: "Business Demo", type: "Business website", description: "One-page site for a local business.", url:"https://purple-mouse-98ef.ncoreopc.workers.dev/", tags: ["One page"] }
          ]
   
 };
